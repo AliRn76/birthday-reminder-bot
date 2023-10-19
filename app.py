@@ -6,7 +6,7 @@ import schedule
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
-from configs import BOT_TOKEN, FILE_NAME
+from configs import BOT_TOKEN, FILE_NAME, ANNIVERSARY_MESSAGE_REQUEST, BIRTHDAY_MESSAGE_REQUEST, MESSAGES
 from utils import find_birthdays, find_anniversaries, send_birthday_messages, send_anniversary_messages, authorization
 
 
@@ -28,9 +28,9 @@ def scheduler():
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if await authorization(update):
-        await update.message.reply_text('Hello Sepideh :)')
+        await update.message.reply_text('سلام سپیده :)')
     else:
-        await update.message.reply_text('Only Sepideh have access to work with me :(')
+        await update.message.reply_text('شما اجازه استفاده از این بات را ندارید. :(')
 
 
 async def file_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -41,31 +41,31 @@ async def file_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ):
             new_file = await update.message.effective_attachment.get_file()
             await new_file.download_to_drive(FILE_NAME)
-            await context.bot.send_message(
-                reply_to_message_id=update.message.id,
-                text='Updated Successfully',
-                chat_id=update.message.chat_id,
-            )
+            await update.message.reply_text('با موفقیت آپدیت شد.', reply_to_message_id=update.message.id)
         else:
-            await context.bot.send_message(
-                reply_to_message_id=update.message.id,
-                text='File Format Is Not Valid.',
-                chat_id=update.message.chat_id,
-            )
-    else:
-        await update.message.reply_text('Only Sepideh have access to work with me :(')
+            await update.message.reply_text('فرمت فایل صحیح نمی‌باشد.', reply_to_message_id=update.message.id)
 
 
 async def birthday_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text('Reply to this message your Birthday message')
+    await update.message.reply_text(BIRTHDAY_MESSAGE_REQUEST)
 
 
 async def anniversary_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text('Reply to this message your Anniversary message')
+    await update.message.reply_text(ANNIVERSARY_MESSAGE_REQUEST)
 
 
 async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text('Reply to this message your Anniversary message')
+    if update.message.reply_to_message:
+        if update.message.reply_to_message.from_user.is_bot is True:
+            text = update.message.text.format('سپیده')
+            final_text = f'نمونه از پیامی که نمایش داده خواهد شد:\n\n{text}'
+
+            if update.message.reply_to_message.text == BIRTHDAY_MESSAGE_REQUEST:
+                await update.message.reply_text(final_text, reply_to_message_id=update.message.id)
+                MESSAGES['birthday'] = update.message.text
+            elif update.message.reply_to_message.text == ANNIVERSARY_MESSAGE_REQUEST:
+                await update.message.reply_text(final_text, reply_to_message_id=update.message.id)
+                MESSAGES['anniversary'] = update.message.text
 
 
 def run_bot() -> None:

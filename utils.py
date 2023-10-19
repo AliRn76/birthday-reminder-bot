@@ -6,7 +6,7 @@ import openpyxl
 import requests
 from telegram.constants import ChatType
 
-from configs import BOT_TOKEN, CHAT_ID, BIRTHDAY_MESSAGE, ANNIVERSARY_MESSAGE, ADMINS_USER_ID, FILE_NAME
+from configs import BOT_TOKEN, CHAT_ID, ADMINS_USER_ID, FILE_NAME, MESSAGES
 
 
 async def authorization(update) -> bool:
@@ -54,10 +54,10 @@ def send_message(message):
 
 
 def send_birthday_messages(name):
-    message = BIRTHDAY_MESSAGE.format(name)
+    message = MESSAGES['birthday'].format(name)
     send_message(message=message)
 
 
 def send_anniversary_messages(name):
-    message = ANNIVERSARY_MESSAGE.format(name)
+    message = MESSAGES['anniversary'].format(name)
     send_message(message=message)

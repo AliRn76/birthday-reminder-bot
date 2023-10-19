@@ -14,4 +14,14 @@ BIRTHDAY_MESSAGE = (
     ' تولدت مبارک. 🤍'
 )
 ANNIVERSARY_MESSAGE = '{} عزیز، امروز سالگرد دیجیفایی شدنته، خوشحالیم که داریمت. 🫶'
+
+MESSAGES = {
+    'anniversary': ANNIVERSARY_MESSAGE,
+    'birthday': BIRTHDAY_MESSAGE,
+}
+
 FILE_NAME = 'users.xlsx'
+
+ANNIVERSARY_MESSAGE_REQUEST = 'لطفا پیام تبریک سالگرد مورد نظر خودتون رو روی همین پیام ریپلای کنید.\nمثال:\n\n{} عزیز، سالگرد دیجیفایی شدنت مبارک.'
+
+BIRTHDAY_MESSAGE_REQUEST = 'لطفا پیام تبریک تولد مورد نظر خودتون رو روی همین پیام ریپلای کنید.\nمثال:\n\n{} عزیز تولدت مبارک.\nامیدوارم سال خوبی پیش رو داشته باشی.'
