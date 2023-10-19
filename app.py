@@ -1,56 +1,45 @@
-import asyncio
-from datetime import datetime
+import time
+from threading import Thread
 
+import pytz
 import schedule
-from dotenv import dotenv_values
-
 from telegram import Update
 from telegram.constants import ChatType
 from telegram.ext import Application, CommandHandler, ContextTypes
 
-config = dotenv_values('.env')
-BOT_TOKEN = config['BOT_TOKEN']
-trusted_ids = config['SEPIDEH_USER_ID'].split(',')
+from configs import ADMINS_USER_ID, BOT_TOKEN
+from utils import find_birthdays, find_anniversaries, send_birthday_messages, send_anniversary_messages
 
 
-BIRTHDAY_MESSAGE = '{} جان تولدت مبارک'
-YEARLY_MESSAGE = '{} عزیز، سالگرد ورودت به دیجیفای مبارک باشه'
+def run_scheduler():
+    schedule.every().day.at('08:00:00', tz=pytz.timezone('Asia/Tehran')).do(scheduler)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
 
 
-async def scheduler():
-    context = ...
-    await context.bot.send_message(chat_id, text=BIRTHDAY_MESSAGE.format(name))
+def scheduler():
+    for name in find_birthdays():
+        send_birthday_messages(name=name)
 
-    await context.bot.send_message(chat_id, text=YEARLY_MESSAGE.format(name))
-
-
-async def send_birthday_messages(context, *, chat_id, name):
-    message = '{} جان تولدت مبارک'.format(name)
-    await context.bot.send_message(chat_id, text=message)
-
-
-async def send_yearly_messages(context, *, chat_id, name):
-    message = '{} عزیز، سالگرد ورودت به دیجیفای مبارک باشه'.format(name)
-    await context.bot.send_message(chat_id, text=message)
+    for name in find_anniversaries():
+        send_anniversary_messages(name=name)
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.chat.type == ChatType.PRIVATE:
-        if str(update.message.from_user.id) in trusted_ids:
+        if str(update.message.from_user.id) in ADMINS_USER_ID:
             return await update.message.reply_text('Hello Sepideh :)')
     await update.message.reply_text('Only Sepideh have access to work with me :(')
 
 
-def main() -> None:
+def run_bot() -> None:
     application = Application.builder().token(BOT_TOKEN).build()
     application.add_handler(CommandHandler(["start"], start))
-    application.run_polling(allowed_updates=Update.ALL_TYPES)
-
-
-def sync_scheduler():
-    asyncio.run(scheduler())
+    application.run_polling()
 
 
 if __name__ == '__main__':
-    schedule.every().day.at('8:00').do(sync_scheduler)
-    main()
+    Thread(target=run_scheduler).start()
+    run_bot()
