@@ -33,7 +33,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text('Only Sepideh have access to work with me :(')
 
 
-async def handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def file_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if await authorization(update):
         if (
                 update.message.document.file_name.endswith('.xlsx')
@@ -56,10 +56,25 @@ async def handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text('Only Sepideh have access to work with me :(')
 
 
+async def birthday_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text('Reply to this message your Birthday message')
+
+
+async def anniversary_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text('Reply to this message your Anniversary message')
+
+
+async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text('Reply to this message your Anniversary message')
+
+
 def run_bot() -> None:
     application = Application.builder().token(BOT_TOKEN).build()
     application.add_handler(CommandHandler(["start"], start))
-    application.add_handler(MessageHandler(filters.Document.ALL, handler))
+    application.add_handler(CommandHandler(["birthday"], birthday_handler))
+    application.add_handler(CommandHandler(["anniversary"], anniversary_handler))
+    application.add_handler(MessageHandler(filters.Document.ALL, file_handler))
+    application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), message_handler))
     application.run_polling()
 
 
