@@ -3,7 +3,7 @@ from threading import Thread
 
 import pytz
 import schedule
-from telegram import Update
+from telegram import Update, BotCommand
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
 from configs import BOT_TOKEN, FILE_NAME, ANNIVERSARY_MESSAGE_REQUEST, BIRTHDAY_MESSAGE_REQUEST, MESSAGES
@@ -68,8 +68,16 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 MESSAGES['anniversary'] = update.message.text
 
 
+async def post_init(application: Application):
+    commands = [
+        BotCommand(command='birthday', description='تنظیم پیام تبریک تولد جدید'),
+        BotCommand(command='anniversary', description='تنظیم پیام تبریک سالگرد جدید'),
+    ]
+    await application.bot.set_my_commands(commands)
+
+
 def run_bot() -> None:
-    application = Application.builder().token(BOT_TOKEN).build()
+    application = Application.builder().token(BOT_TOKEN).post_init(post_init).build()
     application.add_handler(CommandHandler(["start"], start))
     application.add_handler(CommandHandler(["birthday"], birthday_handler))
     application.add_handler(CommandHandler(["anniversary"], anniversary_handler))
