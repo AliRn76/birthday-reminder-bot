@@ -4,11 +4,10 @@ from threading import Thread
 import pytz
 import schedule
 from telegram import Update
-from telegram.constants import ChatType
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
-from configs import ADMINS_USER_ID, BOT_TOKEN
-from utils import find_birthdays, find_anniversaries, send_birthday_messages, send_anniversary_messages
+from configs import BOT_TOKEN, FILE_NAME
+from utils import find_birthdays, find_anniversaries, send_birthday_messages, send_anniversary_messages, authorization
 
 
 def run_scheduler():
@@ -28,15 +27,39 @@ def scheduler():
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message.chat.type == ChatType.PRIVATE:
-        if str(update.message.from_user.id) in ADMINS_USER_ID:
-            return await update.message.reply_text('Hello Sepideh :)')
-    await update.message.reply_text('Only Sepideh have access to work with me :(')
+    if await authorization(update):
+        await update.message.reply_text('Hello Sepideh :)')
+    else:
+        await update.message.reply_text('Only Sepideh have access to work with me :(')
+
+
+async def handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if await authorization(update):
+        if (
+                update.message.document.file_name.endswith('.xlsx')
+                and update.message.document.mime_type.startswith('application/')
+        ):
+            new_file = await update.message.effective_attachment.get_file()
+            await new_file.download_to_drive(FILE_NAME)
+            await context.bot.send_message(
+                reply_to_message_id=update.message.id,
+                text='Updated Successfully',
+                chat_id=update.message.chat_id,
+            )
+        else:
+            await context.bot.send_message(
+                reply_to_message_id=update.message.id,
+                text='File Format Is Not Valid.',
+                chat_id=update.message.chat_id,
+            )
+    else:
+        await update.message.reply_text('Only Sepideh have access to work with me :(')
 
 
 def run_bot() -> None:
     application = Application.builder().token(BOT_TOKEN).build()
     application.add_handler(CommandHandler(["start"], start))
+    application.add_handler(MessageHandler(filters.Document.ALL, handler))
     application.run_polling()
 
 

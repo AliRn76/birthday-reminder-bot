@@ -4,12 +4,20 @@ from typing import Iterator
 import jdatetime
 import openpyxl
 import requests
+from telegram.constants import ChatType
 
-from configs import BOT_TOKEN, CHAT_ID, BIRTHDAY_MESSAGE, ANNIVERSARY_MESSAGE
+from configs import BOT_TOKEN, CHAT_ID, BIRTHDAY_MESSAGE, ANNIVERSARY_MESSAGE, ADMINS_USER_ID, FILE_NAME
+
+
+async def authorization(update) -> bool:
+    if update.message.chat.type == ChatType.PRIVATE:
+        if str(update.message.chat.id) in ADMINS_USER_ID:
+            return True
+    return False
 
 
 def read_excel() -> Iterator[tuple[str, datetime.date, datetime.date]]:
-    dataframe = openpyxl.load_workbook('users.xlsx').active
+    dataframe = openpyxl.load_workbook(FILE_NAME).active
 
     for row in range(0, dataframe.max_row):
         first_name, last_name, birthday, anniversary_day = dataframe.iter_cols(1, 4)
@@ -38,7 +46,9 @@ def find_anniversaries() -> Iterator[str]:
 def send_message(message):
     url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage'
     try:
-        requests.post(url, json={'chat_id': CHAT_ID, 'text': message})
+        res = requests.post(url, json={'chat_id': CHAT_ID, 'text': message})
+        if res.status_code != 200:
+            print(res.text)
     except Exception as e:
         print(e)
 

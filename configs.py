@@ -14,3 +14,4 @@ BIRTHDAY_MESSAGE = (
     ' تولدت مبارک. 🤍'
 )
 ANNIVERSARY_MESSAGE = '{} عزیز، امروز سالگرد دیجیفایی شدنته، خوشحالیم که داریمت. 🫶'
+FILE_NAME = 'users.xlsx'
