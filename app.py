@@ -1,3 +1,6 @@
+import asyncio
+from datetime import datetime
+
 import schedule
 from dotenv import dotenv_values
 
@@ -10,10 +13,15 @@ BOT_TOKEN = config['BOT_TOKEN']
 trusted_ids = config['SEPIDEH_USER_ID'].split(',')
 
 
-def scheduler():
+BIRTHDAY_MESSAGE = '{} جان تولدت مبارک'
+YEARLY_MESSAGE = '{} عزیز، سالگرد ورودت به دیجیفای مبارک باشه'
+
+
+async def scheduler():
     context = ...
-    send_birthday_messages(context, chat_id=1, name='علی')
-    send_yearly_messages(context, chat_id=1, name='علی')
+    await context.bot.send_message(chat_id, text=BIRTHDAY_MESSAGE.format(name))
+
+    await context.bot.send_message(chat_id, text=YEARLY_MESSAGE.format(name))
 
 
 async def send_birthday_messages(context, *, chat_id, name):
@@ -39,6 +47,10 @@ def main() -> None:
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 
+def sync_scheduler():
+    asyncio.run(scheduler())
+
+
 if __name__ == '__main__':
-    schedule.every().day.at('8:00').do(scheduler)
+    schedule.every().day.at('8:00').do(sync_scheduler)
     main()
