@@ -3,6 +3,8 @@ from dotenv import dotenv_values
 config = dotenv_values('.env')
 
 
+DEBUG = False
+
 BOT_TOKEN = config['BOT_TOKEN']
 ADMINS_USER_ID = config['ADMINS_USER_ID'].split(',')
 CHAT_ID = config['CHAT_ID']

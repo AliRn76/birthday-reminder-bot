@@ -6,13 +6,15 @@ import schedule
 from telegram import Update, BotCommand
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
-from configs import BOT_TOKEN, FILE_NAME, ANNIVERSARY_MESSAGE_REQUEST, BIRTHDAY_MESSAGE_REQUEST, MESSAGES
+from configs import BOT_TOKEN, FILE_NAME, ANNIVERSARY_MESSAGE_REQUEST, BIRTHDAY_MESSAGE_REQUEST, MESSAGES, DEBUG
 from utils import find_birthdays, find_anniversaries, send_birthday_messages, send_anniversary_messages, authorization
 
 
 def run_scheduler():
-    # schedule.every().day.at('08:00:00', tz=pytz.timezone('Asia/Tehran')).do(scheduler)
-    schedule.every().minute.do(scheduler)
+    if DEBUG:
+        schedule.every().minute.do(scheduler)
+    else:
+        schedule.every().day.at('08:00:00', tz=pytz.timezone('Asia/Tehran')).do(scheduler)
     while True:
         schedule.run_pending()
         time.sleep(1)
