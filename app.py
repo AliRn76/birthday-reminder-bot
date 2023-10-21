@@ -11,8 +11,8 @@ from utils import find_birthdays, find_anniversaries, send_birthday_messages, se
 
 
 def run_scheduler():
-    schedule.every().day.at('08:00:00', tz=pytz.timezone('Asia/Tehran')).do(scheduler)
-
+    # schedule.every().day.at('08:00:00', tz=pytz.timezone('Asia/Tehran')).do(scheduler)
+    schedule.every().minute.do(scheduler)
     while True:
         schedule.run_pending()
         time.sleep(1)
