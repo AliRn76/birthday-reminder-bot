@@ -19,7 +19,7 @@ MESSAGES = {
     'birthday': BIRTHDAY_MESSAGE,
 }
 
-FILE_NAME = 'database/users.xlsx'
+FILE_NAME = './database/users.xlsx'
 
 ANNIVERSARY_MESSAGE_REQUEST = 'لطفا پیام تبریک سالگرد مورد نظر خودتون رو روی همین پیام ریپلای کنید.\nمثال:\n\n{} عزیز، سالگرد دیجیفایی شدنت مبارک.'
 

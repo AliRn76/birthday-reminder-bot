@@ -12,4 +12,4 @@ services:
       BOT_TOKEN: "xxx"
       ADMINS_USER_ID: "293669724,272690577"
       CHAT_ID: "293669724"
-      DEBUG: "true"
+      DEBUG: "false"

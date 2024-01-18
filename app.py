@@ -12,6 +12,7 @@ from utils import find_birthdays, find_anniversaries, send_birthday_messages, se
 
 def run_scheduler():
     if DEBUG:
+        send_birthday_messages(name='علی')
         schedule.every().minute.do(scheduler)
     else:
         schedule.every().day.at('08:00:00', tz=pytz.timezone('Asia/Tehran')).do(scheduler)
