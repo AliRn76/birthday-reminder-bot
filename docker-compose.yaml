@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: reminder-bot
+    restart: always
+    volumes:
+      - /srv/reminder-bot:/bot/database
+    environment:
+      BOT_TOKEN: "xxx"
+      ADMINS_USER_ID: "293669724,272690577"
+      CHAT_ID: "293669724"
+      DEBUG: "true"

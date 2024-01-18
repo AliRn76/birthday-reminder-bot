@@ -1,13 +1,10 @@
-from dotenv import dotenv_values
+import os
 
-config = dotenv_values('.env')
+DEBUG = os.environ['DEBUG'].lower() == 'true'
 
-
-DEBUG = False
-
-BOT_TOKEN = config['BOT_TOKEN']
-ADMINS_USER_ID = config['ADMINS_USER_ID'].split(',')
-CHAT_ID = config['CHAT_ID']
+BOT_TOKEN = os.environ['BOT_TOKEN']
+ADMINS_USER_ID = os.environ['ADMINS_USER_ID'].split(',')
+CHAT_ID = os.environ['CHAT_ID']
 
 BIRTHDAY_MESSAGE = (
     '{} جان، همکار عزیز\n'
@@ -22,7 +19,7 @@ MESSAGES = {
     'birthday': BIRTHDAY_MESSAGE,
 }
 
-FILE_NAME = 'users.xlsx'
+FILE_NAME = 'database/users.xlsx'
 
 ANNIVERSARY_MESSAGE_REQUEST = 'لطفا پیام تبریک سالگرد مورد نظر خودتون رو روی همین پیام ریپلای کنید.\nمثال:\n\n{} عزیز، سالگرد دیجیفایی شدنت مبارک.'
 
